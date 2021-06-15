@@ -1,5 +1,10 @@
 package it.polito.tdp.crimes.model;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+
 import org.jgrapht.Graphs;
 import org.jgrapht.graph.DefaultWeightedEdge;
 import org.jgrapht.graph.SimpleWeightedGraph;
@@ -46,6 +51,43 @@ public class Model {
 		}
 		
 		return "#Vertici: "+grafo.vertexSet().size()+"\n#Archi: "+grafo.edgeSet().size()+"\n";
+		
+	}
+	
+	class ComparatoreVicini implements Comparator<Adiacenza>{
+
+		@Override
+		public int compare(Adiacenza a0, Adiacenza a1) {
+			return a0.getDist().compareTo(a1.getDist());
+		}
+		
+	}
+	
+	public String visualizzaAdiacenze() {
+		
+		String result = "";
+		
+		for(District d : grafo.vertexSet()) {
+			 
+			List<District> vicini = Graphs.neighborListOf(grafo, d);
+			
+			List<Adiacenza> distVicini = new ArrayList<>();
+			
+			result += "District "+d.getId()+" distances:\n";
+			
+			for(District dd : vicini) {
+				distVicini.add(new Adiacenza(dd,grafo.getEdgeWeight(grafo.getEdge(d, dd))));
+			}
+		
+			Collections.sort(distVicini, new ComparatoreVicini());
+			
+			for(Adiacenza a : distVicini) {
+				result += a.getD().getId()+" - "+a.getDist()+"\n";
+			}
+			
+		}
+		
+		return result;
 		
 	}
 	

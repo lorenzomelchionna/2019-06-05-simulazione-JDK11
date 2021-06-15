@@ -57,6 +57,8 @@ public class FXMLController {
     	
     	txtResult.appendText(model.creaGrafo(anno));
     	
+    	txtResult.appendText(model.visualizzaAdiacenze());
+    	
     }
 
     @FXML
