@@ -5,6 +5,8 @@
 package it.polito.tdp.crimes;
 
 import java.net.URL;
+import java.time.DateTimeException;
+import java.time.LocalDate;
 import java.util.ResourceBundle;
 
 import it.polito.tdp.crimes.model.Model;
@@ -28,10 +30,10 @@ public class FXMLController {
     private ComboBox<Integer> boxAnno; // Value injected by FXMLLoader
 
     @FXML // fx:id="boxMese"
-    private ComboBox<?> boxMese; // Value injected by FXMLLoader
+    private ComboBox<Integer> boxMese; // Value injected by FXMLLoader
 
     @FXML // fx:id="boxGiorno"
-    private ComboBox<?> boxGiorno; // Value injected by FXMLLoader
+    private ComboBox<Integer> boxGiorno; // Value injected by FXMLLoader
 
     @FXML // fx:id="btnCreaReteCittadina"
     private Button btnCreaReteCittadina; // Value injected by FXMLLoader
@@ -63,7 +65,39 @@ public class FXMLController {
 
     @FXML
     void doSimula(ActionEvent event) {
-
+    	
+    	Integer N;
+    	
+    	try {
+    		N = Integer.parseInt(txtN.getText());
+    	}catch(NumberFormatException nfe) {
+    		txtResult.appendText("Formato N non corretto!\n");
+    		return;
+    	}
+    	
+    	if(N<1 || N>10) {
+    		txtResult.appendText("N deve essere compreso tra 1 e 10\n");
+    		return;
+    	}
+    	
+    	Integer anno = boxAnno.getValue();
+    	Integer mese = boxMese.getValue();
+    	Integer giorno = boxGiorno.getValue();
+    	
+    	if(anno == null || mese == null || giorno == null) {
+    		txtResult.appendText("Seleziona tutti i campi per la data!\n");
+    		return;
+    	}
+    	
+    	try {
+    		LocalDate.of(anno, mese, giorno);
+    	}catch(DateTimeException e) {
+    		txtResult.appendText("Data non corretta!\n");
+    		return;
+    	}
+    	
+    	txtResult.appendText("Simulazione con "+N+" agenti.\n");
+    	
     }
 
     @FXML // This method is called by the FXMLLoader when initialization is complete
@@ -81,8 +115,9 @@ public class FXMLController {
     public void setModel(Model model) {
     	this.model = model;
     	
-    	for(int i = 2014; i<=2017; i++)
-    		boxAnno.getItems().add(i);
+    	boxAnno.getItems().addAll(this.model.getAnni());
+    	boxMese.getItems().addAll(this.model.getMesi());
+    	boxGiorno.getItems().addAll(this.model.getGiorni());
     }
     
 }
